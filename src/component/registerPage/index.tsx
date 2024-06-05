@@ -53,7 +53,7 @@ const SignUpPage = () => {
 
       localStorage.setItem("userData", JSON.stringify(userData));
       alert("User data saved!");
-      navigate("/login");
+      navigate("/");
     },
   });
 

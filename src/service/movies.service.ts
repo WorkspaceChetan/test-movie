@@ -12,7 +12,6 @@ export class Movies {
           },
         }
       );
-      // console.log(res, "hjg");
 
       return res.data.results;
     } catch (error) {

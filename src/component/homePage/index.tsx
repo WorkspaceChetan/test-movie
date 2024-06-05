@@ -28,7 +28,7 @@ const HomePage = () => {
         <PopularMovieList />
         <MovieListText>Top Rated Movies</MovieListText>
         <TopRatedMovieList />
-        <MovieListText>NowPlaying Movies</MovieListText>
+        <MovieListText>Now Playing Movies</MovieListText>
         <NowPlayingMovieList />
         <UpcomingMovieList />
       </HomeThirdBox>

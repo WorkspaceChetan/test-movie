@@ -30,41 +30,21 @@ import { Movie } from "types/Movie";
 const MovieDetailsDialog = ({
   open,
   close,
-  movieId,
-  handleSetMovies,
+  movieDetails,
+  handleToggleWatchList,
 }: {
   open: boolean;
   close: () => void;
-  movieId: number;
-  handleSetMovies: (val: Movie[]) => void;
+  movieDetails: Movie | null;
+  handleToggleWatchList: (val: number) => void;
 }) => {
-  const [movies, setMovies] = useState<Movie[]>([]);
-
-  useEffect(() => {
-    const fetchMovies = async () => {
-      let movieData = await Movies.getMovies();
-      const particularMovie = movieData.filter((x) => x.id === movieId);
-      setMovies(particularMovie);
-    };
-    fetchMovies();
-  }, [movieId]);
-
-  const handleClickAddToWatchlist = (id: number) => {
-    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-    if (watchlist.includes(id)) {
-      watchlist = watchlist.filter((movieId: number) => movieId !== id);
+  const handleClickAddToWatchlist = (id: number, isFavorite?: boolean) => {
+    if (isFavorite) {
       WatchListServices.removeFromWatchList(id);
     } else {
-      watchlist.push(id);
       WatchListServices.addToWatchList(id);
     }
-    localStorage.setItem("watchlist", JSON.stringify(watchlist));
-    const updatedMovies = movies.map((movie) =>
-      movie.id === id
-        ? { ...movie, isAddedToWatchlist: !movie.isAddedToWatchlist }
-        : movie
-    );
-    handleSetMovies(updatedMovies);
+    handleToggleWatchList(id);
   };
 
   return (
@@ -76,11 +56,11 @@ const MovieDetailsDialog = ({
               <CloseIcon />
             </MovieDetailsButtonBox>
             <MovieDetailsDialogContain dividers>
-              {movies.map((movie) => (
+              {movieDetails && (
                 <>
                   <Box>
                     <MovieDetailsImg
-                      src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+                      src={`https://image.tmdb.org/t/p/w500${movieDetails.backdrop_path}`}
                     />
                     <MovieDetailsSecBox>
                       <MovieDetailsButton>
@@ -88,11 +68,13 @@ const MovieDetailsDialog = ({
                         <Typography color="#f2f2f2">Play</Typography>
                       </MovieDetailsButton>
                       <MovieDetailsIcon
-                        onClick={() => handleClickAddToWatchlist(movie.id)}
+                        onClick={() =>
+                          handleClickAddToWatchlist(movieDetails.id)
+                        }
                       >
                         <AddRoundedIcon
                           sx={{
-                            color: movie.isAddedToWatchlist
+                            color: movieDetails.isAddedToWatchlist
                               ? "#ff0000"
                               : "#fff",
                           }}
@@ -102,12 +84,12 @@ const MovieDetailsDialog = ({
                   </Box>
 
                   <MovieDetailsThirdBox>
-                    <Box key={movie.id}>
+                    <Box key={movieDetails.id}>
                       <MovieDetailsText>
-                        {movie.original_title}
+                        {movieDetails.original_title}
                       </MovieDetailsText>
                       <MovieDetailsSecText>
-                        {movie.overview}
+                        {movieDetails.overview}
                       </MovieDetailsSecText>
 
                       <MovieDetailsDividerContain
@@ -117,7 +99,7 @@ const MovieDetailsDialog = ({
                       <MovieDetailsTextTyprographt>
                         Info on{" "}
                         <MovieDetailsSecSpan>
-                          {movie.original_title}
+                          {movieDetails.original_title}
                         </MovieDetailsSecSpan>
                       </MovieDetailsTextTyprographt>
 
@@ -128,17 +110,17 @@ const MovieDetailsDialog = ({
 
                       <MovieDetailsTypographyContain>
                         <MovieDetailsSpan> Release date:</MovieDetailsSpan>{" "}
-                        {movie.release_date}
+                        {movieDetails.release_date}
                       </MovieDetailsTypographyContain>
 
                       <MovieDetailsTypographyContain>
                         <MovieDetailsSpan> Average vote:</MovieDetailsSpan>{" "}
-                        {movie.vote_average}
+                        {movieDetails.vote_average}
                       </MovieDetailsTypographyContain>
 
                       <MovieDetailsTypographyContain>
                         <MovieDetailsSpan>Original language:</MovieDetailsSpan>{" "}
-                        {movie.original_language}
+                        {movieDetails.original_language}
                       </MovieDetailsTypographyContain>
 
                       <MovieDetailsTypographyContain>
@@ -151,7 +133,7 @@ const MovieDetailsDialog = ({
                     </Box>
                   </MovieDetailsThirdBox>
                 </>
-              ))}
+              )}
             </MovieDetailsDialogContain>
           </MovieDetailsFristBox>
         </MovieDetailsMainBox>

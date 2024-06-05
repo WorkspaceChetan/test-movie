@@ -7,13 +7,9 @@ import { Movie } from "types/Movie";
 const UpcomingMovieList = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
 
-  console.log("kikjij");
-
   useEffect(() => {
     const fetchMovies = async () => {
       let movieData = await UpComingMovies.getUpComingMovies();
-      console.log(movieData, "movieData");
-
       const watchliatData = await WatchListServices.getWatchList();
 
       movieData = movieData.map((x) => {

@@ -27,14 +27,15 @@ const MovieList = ({
   handleSetMovies: (val: Movie[]) => void;
 }) => {
   const [open, setOpen] = useState(false);
-  const [movieId, setMovieId] = useState(0);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const openHandle = (id: number) => {
-    setMovieId(id);
+  const openHandle = (data: Movie) => {
+    setSelectedMovie(data);
     setOpen(true);
   };
 
   const closeHandle = () => {
+    setSelectedMovie(null);
     setOpen(false);
   };
 
@@ -45,22 +46,33 @@ const MovieList = ({
     setCurrentPage(value);
   };
 
-  const handleClickAddToWatchlist = (id: number) => {
-    let watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-    if (watchlist.includes(id)) {
-      watchlist = watchlist.filter((movieId: number) => movieId !== id);
+  const handleClickAddToWatchlist = (id: number, isFavorite?: boolean) => {
+    if (isFavorite) {
       WatchListServices.removeFromWatchList(id);
     } else {
-      watchlist.push(id);
       WatchListServices.addToWatchList(id);
     }
-    localStorage.setItem("watchlist", JSON.stringify(watchlist));
-    const updatedMovies = movies.map((movie) =>
+    const updatedMovies = [...movies].map((movie) =>
       movie.id === id
         ? { ...movie, isAddedToWatchlist: !movie.isAddedToWatchlist }
         : movie
     );
     handleSetMovies(updatedMovies);
+  };
+
+  const handleToggleWatchList = (id: number) => {
+    const updatedMovies = [...movies].map((movie) => {
+      return movie.id === id
+        ? { ...movie, isAddedToWatchlist: !movie.isAddedToWatchlist }
+        : movie;
+    });
+    handleSetMovies(updatedMovies);
+
+    if (selectedMovie) {
+      const data = selectedMovie;
+      data.isAddedToWatchlist = !data.isAddedToWatchlist;
+      setSelectedMovie(data);
+    }
   };
 
   const currentMovies = useMemo(() => {
@@ -76,7 +88,7 @@ const MovieList = ({
           {currentMovies.map((movie) => (
             <MovieListThirdBox key={movie.id}>
               <MovieListImgContain
-                onClick={() => openHandle(movie.id)}
+                onClick={() => openHandle(movie)}
                 src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
                 alt={movie.original_title}
               />
@@ -85,7 +97,12 @@ const MovieList = ({
                   <PlayArrowRoundedIcon />
                 </MovieListFourdBox>
                 <MovieListFivedBox
-                  onClick={() => handleClickAddToWatchlist(movie.id)}
+                  onClick={() =>
+                    handleClickAddToWatchlist(
+                      movie.id,
+                      movie.isAddedToWatchlist
+                    )
+                  }
                 >
                   <AddRoundedIcon
                     sx={{
@@ -94,10 +111,10 @@ const MovieList = ({
                   />
                 </MovieListFivedBox>
               </MovieListBoxContain>
-              <MovieListTitleText onClick={() => openHandle(movie.id)}>
+              <MovieListTitleText onClick={() => openHandle(movie)}>
                 {movie.original_title}
               </MovieListTitleText>
-              <MovieListSubTitleText onClick={() => openHandle(movie.id)}>
+              <MovieListSubTitleText onClick={() => openHandle(movie)}>
                 {movie.overview}
               </MovieListSubTitleText>
             </MovieListThirdBox>
@@ -115,8 +132,8 @@ const MovieList = ({
       <MovieDetailsDialog
         open={open}
         close={closeHandle}
-        movieId={movieId}
-        handleSetMovies={handleSetMovies}
+        movieDetails={selectedMovie}
+        handleToggleWatchList={handleToggleWatchList}
       />
     </UIStyledMovieBox>
   );
