@@ -72,7 +72,6 @@ export const RegisterPageSecBox = styled(Box)(() => ({
 }));
 
 export const RegisterPageTextTitle = styled(Typography)(() => ({
-  variant: "button",
   fontWeight: 500,
   color: "#E50914",
   textTransform: "none",

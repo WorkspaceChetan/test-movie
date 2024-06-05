@@ -7,6 +7,8 @@ import SignUpPage from "./component/registerPage/index";
 import SignInPage from "./component/signInPage/index";
 import HomePage from "./component/homePage/index";
 import theme from "./theme/index.js";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -21,6 +23,18 @@ function App() {
             <Route path="/signup" element={<SignUpPage />} />
           </Routes>
         </BrowserRouter>
+
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </ThemeProvider>
   );

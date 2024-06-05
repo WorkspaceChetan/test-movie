@@ -19,6 +19,7 @@ import {
   StyledBackgroundBox,
   RegisterForm,
 } from "./registerPage.styled";
+import { toast } from "react-toastify";
 
 const validationSchema = yup.object({
   name: yup.string().required("Name is required"),
@@ -52,7 +53,7 @@ const SignUpPage = () => {
       };
 
       localStorage.setItem("userData", JSON.stringify(userData));
-      alert("User data saved!");
+      toast.success("User registered successfully.");
       navigate("/");
     },
   });
@@ -65,7 +66,7 @@ const SignUpPage = () => {
             <RegisterForm onSubmit={formik.handleSubmit}>
               <RegisterPageText variant="h5">Sign Up</RegisterPageText>
               <RegisterPageSecBox>
-                <RegisterPageTextTitle>
+                <RegisterPageTextTitle variant="button">
                   Pay attention: this is not the original Netflix sign up. Don't
                   insert your real credentials here!
                 </RegisterPageTextTitle>

@@ -20,6 +20,7 @@ import {
   SignUpTextBox,
   StyledBackgroundBox,
 } from "./signupPage.styled";
+import { toast } from "react-toastify";
 
 const validationSchema = yup.object({
   username: yup
@@ -46,16 +47,27 @@ const SignInPage = () => {
           parsedUserData.email === values.username &&
           parsedUserData.password === values.password
         ) {
-          alert("Login successful!");
+          toast.success("User logged in successfully.");
           navigate("/home");
         } else {
-          alert("Invalid email or password.");
+          toast.error("Invalid email or password.");
         }
       } else {
-        alert("No user data found. Please sign up first.");
+        toast.error("No user data found. Please sign up first.");
       }
     },
   });
+
+  const handleClickGoogleSignin = () => {
+    const userData = {
+      name: "test",
+      email: "test@test.com",
+      password: "test-password",
+    };
+    localStorage.setItem("userData", JSON.stringify(userData));
+    toast.success("User logged in successfully.");
+    navigate("/home");
+  };
 
   return (
     <>
@@ -109,7 +121,7 @@ const SignInPage = () => {
                   Sign in
                 </SignUPSubSignupText>
               </SignUpButton>
-              <SignUpSecButton>
+              <SignUpSecButton onClick={handleClickGoogleSignin}>
                 <SignUpImg src="/images/logo1.png" />
 
                 <SignUPSubSignupText variant="body1">
